@@ -1,0 +1,139 @@
+{
+    "form_name": "RUS Form 201",
+    "agency": "USDA Rural Utilities Service",
+    "program": "Electric Loan and Loan Guarantee Program",
+    "authority": "7 CFR Part 1710",
+    "sections": {
+        "section_a": {
+            "title": "Applicant / Borrower Information",
+            "fields": [
+                "applicant_name",
+                "applicant_type",
+                "state",
+                "date_incorporated",
+                "physical_address",
+                "mailing_address",
+                "contact_name",
+                "phone",
+                "email",
+                "existing_borrower",
+                "borrower_designation",
+                "duns_number"
+            ]
+        },
+        "section_b": {
+            "title": "Loan Request",
+            "fields": [
+                "loan_type",
+                "loan_amount",
+                "loan_purpose",
+                "interest_rate_type",
+                "term_years",
+                "amortization_years",
+                "first_advance_date",
+                "construction_period"
+            ]
+        },
+        "section_c": {
+            "title": "Project Description",
+            "fields": [
+                "project_name",
+                "project_type",
+                "technology",
+                "capacity_mw",
+                "annual_generation_mwh",
+                "location",
+                "rural_area",
+                "consumers_served",
+                "target_cod",
+                "useful_life",
+                "narrative"
+            ]
+        },
+        "section_d": {
+            "title": "Estimated Project Cost",
+            "fields": [
+                "cost_breakdown",
+                "total_project_cost",
+                "sources"
+            ]
+        },
+        "section_e": {
+            "title": "Financial Information",
+            "fields": [
+                "equity",
+                "total_assets",
+                "total_liabilities",
+                "annual_revenue",
+                "net_income",
+                "current_ratio",
+                "debt_to_equity",
+                "tier",
+                "dsc"
+            ]
+        },
+        "section_f": {
+            "title": "Economic Feasibility",
+            "fields": [
+                "projected_dscr_min",
+                "projected_dscr_avg",
+                "project_irr",
+                "lcoe",
+                "payback_years",
+                "npv",
+                "offtake_type",
+                "offtake_term",
+                "contract_price"
+            ]
+        },
+        "section_g": {
+            "title": "Environmental Review",
+            "fields": [
+                "nepa_status",
+                "environmental_assessment",
+                "wetlands",
+                "floodplains",
+                "endangered_species",
+                "historic_properties",
+                "tribal_consultation"
+            ]
+        },
+        "section_h": {
+            "title": "Certifications and Disclosures",
+            "fields": [
+                "lobbying_certification",
+                "debarment_certification",
+                "drug_free_workplace",
+                "equal_opportunity",
+                "civil_rights_compliance",
+                "flood_insurance"
+            ]
+        }
+    },
+    "eligible_borrower_types": [
+        "cooperative",
+        "public_utility_district",
+        "municipal_utility",
+        "state_authority"
+    ],
+    "loan_types": [
+        "Municipal Rate Loan",
+        "Hardship Rate Loan",
+        "Federal Financing Bank Guaranteed Loan",
+        "Treasury Rate Loan"
+    ],
+    "supporting_documents": [
+        "Board resolution authorizing loan application",
+        "Audited financial statements (3 years)",
+        "Construction work plan or engineering study",
+        "Environmental review documentation",
+        "Power purchase agreements or offtake contracts",
+        "Feasibility study or independent engineer report",
+        "Long-range financial forecast",
+        "Certificate of incorporation and bylaws",
+        "Area coverage map",
+        "Load forecast data",
+        "Rate schedules",
+        "Insurance documentation"
+    ]
+}

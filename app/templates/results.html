@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+{% block title %}Assessment Results - {{ results.project_info.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Bankability Assessment Results</h1>
+    <p class="project-name-header">{{ results.project_info.name }}
+        <span class="project-meta">{{ results.project_info.technology }} | {{ results.project_info.capacity_mw }} MW | {{ results.project_info.location }}</span>
+    </p>
+</div>
+
+<!-- Overall Score -->
+<div class="score-hero">
+    <div class="score-circle" style="border-color: {{ results.grade_color }};">
+        <span class="score-value">{{ results.overall_score|round(1) }}</span>
+        <span class="score-max">/100</span>
+    </div>
+    <div class="score-details">
+        <h2 class="score-grade" style="color: {{ results.grade_color }};">{{ results.grade }}</h2>
+        <p class="score-label">{{ results.grade_label }}</p>
+    </div>
+</div>
+
+<!-- Sub-Scores -->
+<section class="results-section">
+    <h2>Assessment Dimensions</h2>
+    <div class="subscore-grid">
+        {% for ss in results.sub_scores %}
+        <div class="subscore-card">
+            <div class="subscore-header">
+                <h3>{{ ss.category }}</h3>
+                <span class="subscore-value">{{ ss.score|round(1) }}<small>/100</small></span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ ss.score }}%;
+                    background: {% if ss.score >= 75 %}#1a7a3a{% elif ss.score >= 50 %}#b8860b{% else %}#b22222{% endif %};">
+                </div>
+            </div>
+            <p class="subscore-weight">Weight: {{ (ss.weight * 100)|round(0) }}% | Weighted: {{ ss.weighted_score|round(1) }}</p>
+            <p class="subscore-commentary">{{ ss.commentary }}</p>
+            <div class="subscore-components">
+                <table class="compact-table">
+                    {% for comp in ss.components %}
+                    <tr><td>{{ comp.name }}</td><td>{{ comp.value }}</td></tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Financial Metrics -->
+{% if results.financial_metrics %}
+<section class="results-section">
+    <h2>Financial Metrics</h2>
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <span class="metric-value">{{ results.financial_metrics.irr_project }}%</span>
+            <span class="metric-label">Project IRR</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ results.financial_metrics.irr_equity }}%</span>
+            <span class="metric-label">Equity IRR</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">${{ "{:,.0f}".format(results.financial_metrics.npv_project) }}</span>
+            <span class="metric-label">Project NPV</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ results.financial_metrics.minimum_dscr }}x</span>
+            <span class="metric-label">Minimum DSCR</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ results.financial_metrics.average_dscr }}x</span>
+            <span class="metric-label">Average DSCR</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">${{ results.financial_metrics.lcoe }}/MWh</span>
+            <span class="metric-label">LCOE</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ results.financial_metrics.payback_years }} yrs</span>
+            <span class="metric-label">Payback Period</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ results.financial_metrics.debt_yield }}%</span>
+            <span class="metric-label">Debt Yield</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ results.financial_metrics.equity_multiple }}x</span>
+            <span class="metric-label">Equity Multiple</span>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Charts -->
+<section class="results-section">
+    <h2>Cash Flow &amp; Coverage</h2>
+    <div class="chart-row">
+        <div class="chart-container">
+            <canvas id="cashFlowChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="dscrChart"></canvas>
+        </div>
+    </div>
+    <div class="chart-row">
+        <div class="chart-container">
+            <canvas id="subScoreRadar"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="cumulativeCFChart"></canvas>
+        </div>
+    </div>
+</section>
+
+<!-- Credit Risk -->
+{% if results.credit_metrics %}
+<section class="results-section">
+    <h2>Credit Risk Assessment</h2>
+    <div class="two-column">
+        <div class="column">
+            <table class="data-table">
+                <tr><td>Equivalent Rating</td><td><strong>{{ results.credit_metrics.equivalent_rating }}</strong></td></tr>
+                <tr><td>Risk Category</td><td>{{ results.credit_metrics.risk_category }}</td></tr>
+                <tr><td>Probability of Default</td><td>{{ results.credit_metrics.probability_of_default }} bps</td></tr>
+                <tr><td>Loss Given Default</td><td>{{ results.credit_metrics.loss_given_default }}%</td></tr>
+                <tr><td>Expected Loss</td><td>${{ "{:,.0f}".format(results.credit_metrics.expected_loss) }}</td></tr>
+                <tr><td>Credit Spread</td><td>{{ results.credit_metrics.credit_spread_bps }} bps</td></tr>
+            </table>
+        </div>
+        <div class="column">
+            {% if results.credit_metrics.risk_factors %}
+            <h3>Risk Factors</h3>
+            <ul class="risk-list">
+                {% for rf in results.credit_metrics.risk_factors %}
+                <li class="risk-{{ rf.severity }}">
+                    <strong>{{ rf.factor }}</strong>
+                    <span class="risk-severity">[{{ rf.severity }}]</span>
+                    <p>{{ rf.detail }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% if results.credit_metrics.mitigants %}
+            <h3>Mitigants</h3>
+            <ul class="mitigant-list">
+                {% for m in results.credit_metrics.mitigants %}
+                <li>
+                    <strong>{{ m.mitigant }}</strong>
+                    <span class="mitigant-strength">[{{ m.strength }}]</span>
+                    <p>{{ m.detail }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Strengths, Weaknesses, Recommendations -->
+<section class="results-section">
+    <div class="three-column">
+        <div class="column">
+            <h2>Strengths</h2>
+            {% if results.strengths %}
+            <ul class="findings-list findings-positive">
+                {% for s in results.strengths %}
+                <li>{{ s }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No notable strengths identified at current parameters.</p>
+            {% endif %}
+        </div>
+        <div class="column">
+            <h2>Weaknesses</h2>
+            {% if results.weaknesses %}
+            <ul class="findings-list findings-negative">
+                {% for w in results.weaknesses %}
+                <li>{{ w }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No significant weaknesses identified.</p>
+            {% endif %}
+        </div>
+        <div class="column">
+            <h2>Recommendations</h2>
+            {% if results.recommendations %}
+            <ol class="findings-list findings-neutral">
+                {% for r in results.recommendations %}
+                <li>{{ r }}</li>
+                {% endfor %}
+            </ol>
+            {% else %}
+            <p>No additional recommendations at this time.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Program Eligibility -->
+<section class="results-section">
+    <h2>Federal Program Eligibility</h2>
+    <div class="two-column">
+        <div class="column">
+            <h3>{{ results.rus_eligibility.program }}</h3>
+            <p><em>{{ results.rus_eligibility.form }}</em></p>
+            <p>
+                <strong>Preliminary Status:</strong>
+                {% if results.rus_eligibility.eligible %}
+                <span class="status-positive">Potentially Eligible</span>
+                {% else %}
+                <span class="status-negative">Requirements Not Met</span>
+                {% endif %}
+            </p>
+            <table class="data-table">
+                {% for c in results.rus_eligibility.criteria %}
+                <tr>
+                    <td>{{ c.criterion }}</td>
+                    <td>
+                        {% if c.met == true %}
+                        <span class="status-positive">Met</span>
+                        {% elif c.met == false %}
+                        <span class="status-negative">Not Met</span>
+                        {% else %}
+                        <span class="status-neutral">{{ c.met }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ c.detail }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <p class="note">{{ results.rus_eligibility.notes }}</p>
+        </div>
+        <div class="column">
+            <h3>{{ results.lpo_eligibility.program }}</h3>
+            <p>
+                <strong>Preliminary Status:</strong>
+                {% if results.lpo_eligibility.potentially_eligible %}
+                <span class="status-positive">Potentially Eligible</span>
+                {% else %}
+                <span class="status-negative">Requirements Not Met</span>
+                {% endif %}
+            </p>
+            <table class="data-table">
+                {% for c in results.lpo_eligibility.criteria %}
+                <tr>
+                    <td>{{ c.criterion }}</td>
+                    <td>
+                        {% if c.met == true %}
+                        <span class="status-positive">Met</span>
+                        {% elif c.met == false %}
+                        <span class="status-negative">Not Met</span>
+                        {% else %}
+                        <span class="status-neutral">{{ c.met }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ c.detail }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <p class="note">{{ results.lpo_eligibility.notes }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- Cash Flow Table -->
+{% if results.cash_flows %}
+<section class="results-section">
+    <h2>Pro Forma Cash Flows</h2>
+    <div class="table-scroll">
+        <table class="data-table cash-flow-table">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Revenue</th>
+                    <th>OpEx</th>
+                    <th>NOI</th>
+                    <th>Debt Service</th>
+                    <th>DSCR</th>
+                    <th>Free Cash Flow</th>
+                    <th>Cumulative CF</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cf in results.cash_flows %}
+                <tr>
+                    <td>{{ cf.year }}</td>
+                    <td>${{ "{:,.0f}".format(cf.revenue) }}</td>
+                    <td>${{ "{:,.0f}".format(cf.opex) }}</td>
+                    <td>${{ "{:,.0f}".format(cf.noi) }}</td>
+                    <td>${{ "{:,.0f}".format(cf.debt_service) }}</td>
+                    <td>{{ cf.dscr }}x</td>
+                    <td>${{ "{:,.0f}".format(cf.free_cash_flow) }}</td>
+                    <td>${{ "{:,.0f}".format(cf.cumulative_cf) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+
+<!-- Sensitivity Analysis -->
+{% if results.sensitivity %}
+<section class="results-section">
+    <h2>Sensitivity Analysis</h2>
+    {% for param_name, param_data in results.sensitivity.items() %}
+    <div class="sensitivity-table-wrapper">
+        <h3>{{ param_data.label }}</h3>
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Variation</th>
+                        <th>Min DSCR</th>
+                        <th>Project IRR (%)</th>
+                        <th>Project NPV ($)</th>
+                        <th>LCOE ($/MWh)</th>
+                        <th>Payback (yrs)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for case in param_data.cases %}
+                    <tr class="{% if case.variation == 0 %}sensitivity-base{% endif %}">
+                        <td>{{ case.label }}</td>
+                        <td>{{ case.min_dscr }}x</td>
+                        <td>{{ case.irr_project }}%</td>
+                        <td>${{ "{:,.0f}".format(case.npv_project) }}</td>
+                        <td>${{ case.lcoe }}</td>
+                        <td>{{ case.payback_years }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+{% endif %}
+
+<!-- Actions -->
+<section class="results-actions">
+    <a href="{{ url_for('analysis.financing') }}" class="btn btn-primary">View Financing Structures</a>
+    <a href="{{ url_for('report.summary_report') }}" class="btn btn-primary">Full Report</a>
+    <a href="{{ url_for('report.export_json') }}" class="btn btn-secondary">Export JSON</a>
+    <a href="{{ url_for('project.new_project') }}" class="btn btn-secondary">New Assessment</a>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+    var cashFlows = {{ results.cash_flows | tojson }};
+    var subScores = {{ results.sub_scores | tojson }};
+    if (typeof initResultsCharts === 'function') {
+        initResultsCharts(cashFlows, subScores);
+    }
+</script>
+{% endblock %}
