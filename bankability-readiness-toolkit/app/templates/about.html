@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}About - Bankability Assessment Toolkit{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>About This Toolkit</h1>
+</div>
+
+<div class="content-section">
+    <h2>Purpose</h2>
+    <p>
+        The Bankability Assessment Toolkit is designed to help energy infrastructure
+        developers, utilities, and financial advisors evaluate the financing readiness
+        of grid-scale energy projects. It addresses the persistent capital gap facing
+        rural and underserved utilities by providing structured analysis tools aligned
+        with federal financing programs.
+    </p>
+
+    <h2>Assessment Methodology</h2>
+    <p>
+        The bankability score is a weighted composite of five assessment dimensions,
+        each scored on a 0-100 scale:
+    </p>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Dimension</th>
+                <th>Weight</th>
+                <th>Key Factors</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Technology &amp; Performance</td>
+                <td>20%</td>
+                <td>Technology readiness, capacity factor, availability, permitting status</td>
+            </tr>
+            <tr>
+                <td>Financial Strength</td>
+                <td>25%</td>
+                <td>DSCR, IRR, NPV, leverage ratio, debt yield, payback period</td>
+            </tr>
+            <tr>
+                <td>Credit &amp; Counterparty</td>
+                <td>20%</td>
+                <td>Offtaker credit rating, contract tenor, revenue concentration, regulatory stability</td>
+            </tr>
+            <tr>
+                <td>Project Structure</td>
+                <td>20%</td>
+                <td>EPC contract, guarantees, insurance, reserves, lender protections</td>
+            </tr>
+            <tr>
+                <td>Market &amp; Resource</td>
+                <td>15%</td>
+                <td>Resource quality, interconnection certainty, curtailment risk, grid congestion</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Score Interpretation</h2>
+    <table class="data-table">
+        <thead>
+            <tr><th>Score Range</th><th>Grade</th><th>Interpretation</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>80-100</td><td>Investment Grade</td><td>Strong bankability; project is well-positioned for financing</td></tr>
+            <tr><td>65-79</td><td>Near Investment Grade</td><td>Adequate with conditions; some areas need strengthening</td></tr>
+            <tr><td>50-64</td><td>Sub-Investment Grade</td><td>Requires significant enhancement before financing</td></tr>
+            <tr><td>35-49</td><td>Speculative</td><td>Major structural gaps; substantial work needed</td></tr>
+            <tr><td>0-34</td><td>Pre-Bankable</td><td>Not ready for financing; early-stage development</td></tr>
+        </tbody>
+    </table>
+
+    <h2>Financing Programs</h2>
+    <h3>USDA RUS Electric Program</h3>
+    <p>
+        The Rural Utilities Service provides direct loans and loan guarantees to
+        rural electric cooperatives, public utility districts, and tribal utilities.
+        The toolkit generates data templates compatible with Form 201 loan application
+        requirements under 7 CFR Part 1710.
+    </p>
+    <h3>DOE LPO Title XVII</h3>
+    <p>
+        The Loan Programs Office provides loan guarantees for projects that employ
+        innovative energy technologies under Title XVII of the Energy Policy Act of
+        2005. The toolkit generates pre-application and full application data
+        structures aligned with 10 CFR Part 609 requirements.
+    </p>
+
+    <h2>Limitations</h2>
+    <p>
+        This toolkit provides analytical outputs for planning and evaluation purposes.
+        Assessment results do not constitute financial advice, credit opinions, or
+        lending commitments. Users should engage qualified financial, legal, and
+        engineering advisors before making financing decisions. Federal program
+        eligibility is determined solely by the respective agencies upon formal
+        application review.
+    </p>
+</div>
+{% endblock %}

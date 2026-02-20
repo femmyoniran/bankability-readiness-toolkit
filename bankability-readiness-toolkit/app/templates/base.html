@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bankability Assessment Toolkit{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('main.index') }}" class="nav-brand">
+                <span class="nav-brand-icon">&#9632;</span>
+                Bankability Toolkit
+            </a>
+            <div class="nav-links">
+                <a href="{{ url_for('main.index') }}">Home</a>
+                <a href="{{ url_for('project.new_project') }}">New Assessment</a>
+                {% if session.get('assessment_results') %}
+                <a href="{{ url_for('analysis.results') }}">Results</a>
+                <a href="{{ url_for('analysis.financing') }}">Financing</a>
+                <a href="{{ url_for('report.summary_report') }}">Report</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+                {{ message }}
+                <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p>Bankability Assessment Toolkit for Energy Infrastructure Projects</p>
+            <p class="footer-disclaimer">
+                Assessment outputs are for analytical purposes only and do not constitute
+                financial advice, credit opinions, or lending commitments.
+            </p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

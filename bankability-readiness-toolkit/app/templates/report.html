@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}Summary Report - {{ report.project_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header report-header">
+    <h1>Bankability Readiness Report</h1>
+    <p class="report-meta">
+        {{ report.project_name }} | Generated: {{ report.date_generated }}
+    </p>
+</div>
+
+<!-- Executive Summary -->
+<section class="report-section">
+    <h2>Executive Summary</h2>
+    <div class="executive-summary">
+        <div class="summary-score">
+            <div class="score-circle-sm" style="border-color: {{ report.grade_color }};">
+                <span class="score-value-sm">{{ report.overall_score|round(1) }}</span>
+            </div>
+            <p>{{ report.grade }} &mdash; {{ report.grade_label }}</p>
+        </div>
+        <div class="summary-text">
+            <table class="data-table">
+                <tr><td>Project</td><td>{{ report.project_name }}</td></tr>
+                <tr><td>Technology</td><td>{{ report.technology }}</td></tr>
+                <tr><td>Capacity</td><td>{{ report.capacity_mw }} MW</td></tr>
+                <tr><td>Total Investment</td><td>${{ "{:,.0f}".format(report.total_investment) }}</td></tr>
+                <tr><td>Location</td><td>{{ report.location }}</td></tr>
+                <tr><td>Entity Type</td><td>{{ report.entity_type }}</td></tr>
+                <tr><td>Development Stage</td><td>{{ report.stage }}</td></tr>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Scoring -->
+<section class="report-section">
+    <h2>Bankability Score Breakdown</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Dimension</th>
+                <th>Score</th>
+                <th>Weight</th>
+                <th>Weighted Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ss in report.sub_scores %}
+            <tr>
+                <td>{{ ss.category }}</td>
+                <td>{{ ss.score|round(1) }}</td>
+                <td>{{ (ss.weight * 100)|round(0) }}%</td>
+                <td>{{ ss.weighted_score|round(1) }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="table-total">
+                <td><strong>Overall</strong></td>
+                <td><strong>{{ report.overall_score|round(1) }}</strong></td>
+                <td><strong>100%</strong></td>
+                <td><strong>{{ report.overall_score|round(1) }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- Key Findings -->
+<section class="report-section">
+    <h2>Key Findings</h2>
+    <div class="three-column">
+        <div class="column">
+            <h3>Strengths</h3>
+            <ul class="findings-list findings-positive">
+                {% for s in report.strengths %}
+                <li>{{ s }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="column">
+            <h3>Weaknesses</h3>
+            <ul class="findings-list findings-negative">
+                {% for w in report.weaknesses %}
+                <li>{{ w }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="column">
+            <h3>Recommendations</h3>
+            <ol class="findings-list findings-neutral">
+                {% for r in report.recommendations %}
+                <li>{{ r }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+</section>
+
+<!-- Financial Summary -->
+{% if report.financial_metrics %}
+<section class="report-section">
+    <h2>Financial Summary</h2>
+    <div class="metrics-grid four-col">
+        <div class="metric-card">
+            <span class="metric-value">{{ report.financial_metrics.irr_project }}%</span>
+            <span class="metric-label">Project IRR</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">${{ "{:,.0f}".format(report.financial_metrics.npv_project) }}</span>
+            <span class="metric-label">Project NPV</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ report.financial_metrics.minimum_dscr }}x</span>
+            <span class="metric-label">Min DSCR</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">${{ report.financial_metrics.lcoe }}/MWh</span>
+            <span class="metric-label">LCOE</span>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Credit Summary -->
+{% if report.credit_metrics %}
+<section class="report-section">
+    <h2>Credit Assessment</h2>
+    <table class="data-table">
+        <tr><td>Equivalent Rating</td><td>{{ report.credit_metrics.equivalent_rating }}</td></tr>
+        <tr><td>Risk Category</td><td>{{ report.credit_metrics.risk_category }}</td></tr>
+        <tr><td>Probability of Default</td><td>{{ report.credit_metrics.probability_of_default }} bps</td></tr>
+        <tr><td>Loss Given Default</td><td>{{ report.credit_metrics.loss_given_default }}%</td></tr>
+        <tr><td>Expected Loss</td><td>${{ "{:,.0f}".format(report.credit_metrics.expected_loss) }}</td></tr>
+    </table>
+</section>
+{% endif %}
+
+<!-- Program Eligibility -->
+<section class="report-section">
+    <h2>Federal Program Eligibility</h2>
+    <div class="two-column">
+        <div class="column">
+            <h3>{{ report.rus_eligibility.program }}</h3>
+            <p><strong>Status:</strong>
+                {% if report.rus_eligibility.eligible %}
+                <span class="status-positive">Potentially Eligible</span>
+                {% else %}
+                <span class="status-negative">Requirements Not Met</span>
+                {% endif %}
+            </p>
+            <p class="note">{{ report.rus_eligibility.notes }}</p>
+        </div>
+        <div class="column">
+            <h3>{{ report.lpo_eligibility.program }}</h3>
+            <p><strong>Status:</strong>
+                {% if report.lpo_eligibility.potentially_eligible %}
+                <span class="status-positive">Potentially Eligible</span>
+                {% else %}
+                <span class="status-negative">Requirements Not Met</span>
+                {% endif %}
+            </p>
+            <p class="note">{{ report.lpo_eligibility.notes }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- Recommended Financing -->
+{% if report.financing_structures %}
+<section class="report-section">
+    <h2>Recommended Financing Structures</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Structure</th>
+                <th>Fit Score</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in report.financing_structures %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.fit_score }}/100</td>
+                <td>{{ s.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
+<!-- Actions -->
+<section class="results-actions">
+    <a href="{{ url_for('analysis.results') }}" class="btn btn-secondary">Detailed Results</a>
+    <a href="{{ url_for('analysis.financing') }}" class="btn btn-secondary">Financing Structures</a>
+    {% if report.rus_eligibility.eligible %}
+    <a href="{{ url_for('report.rus_201') }}" class="btn btn-primary">RUS Form 201</a>
+    {% endif %}
+    {% if report.lpo_eligibility.potentially_eligible %}
+    <a href="{{ url_for('report.lpo_xvii') }}" class="btn btn-primary">DOE LPO Application</a>
+    {% endif %}
+    <a href="{{ url_for('report.export_json') }}" class="btn btn-secondary">Export JSON</a>
+    <a href="{{ url_for('project.new_project') }}" class="btn btn-secondary">New Assessment</a>
+</section>
+
+<div class="report-disclaimer">
+    <p>This report is generated for preliminary assessment purposes only and does not constitute professional financial,
+    legal, or engineering advice. All projections are estimates based on the input parameters provided. Actual results may
+    vary materially. Consult qualified professionals before making investment or financing decisions.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{
+    "credit_rating_scales": {
+        "AAA": {"pd_bps": 3, "description": "Highest quality, minimal credit risk"},
+        "AA+": {"pd_bps": 5, "description": "Very high quality, very low credit risk"},
+        "AA": {"pd_bps": 7, "description": "Very high quality, very low credit risk"},
+        "AA-": {"pd_bps": 9, "description": "High quality, very low credit risk"},
+        "A+": {"pd_bps": 12, "description": "High quality, low credit risk"},
+        "A": {"pd_bps": 15, "description": "Upper medium grade, low credit risk"},
+        "A-": {"pd_bps": 20, "description": "Upper medium grade, low credit risk"},
+        "BBB+": {"pd_bps": 30, "description": "Medium grade, moderate credit risk"},
+        "BBB": {"pd_bps": 45, "description": "Medium grade, moderate credit risk"},
+        "BBB-": {"pd_bps": 65, "description": "Lower medium grade, moderate credit risk"},
+        "BB+": {"pd_bps": 100, "description": "Speculative, substantial credit risk"},
+        "BB": {"pd_bps": 150, "description": "Speculative, substantial credit risk"},
+        "BB-": {"pd_bps": 250, "description": "Speculative, high credit risk"},
+        "B+": {"pd_bps": 400, "description": "Highly speculative"},
+        "B": {"pd_bps": 650, "description": "Highly speculative"},
+        "B-": {"pd_bps": 1000, "description": "Substantial risk"}
+    },
+    "recovery_rates_by_security": {
+        "senior_secured_first_lien": 0.70,
+        "senior_secured_second_lien": 0.55,
+        "senior_unsecured": 0.40,
+        "subordinated": 0.25,
+        "mezzanine": 0.20
+    },
+    "dscr_benchmarks": {
+        "investment_grade": {
+            "minimum": 1.40,
+            "average": 1.50,
+            "description": "Minimum DSCR for investment grade project finance"
+        },
+        "sub_investment_grade": {
+            "minimum": 1.20,
+            "average": 1.30,
+            "description": "Minimum DSCR for sub-investment grade"
+        },
+        "rus_requirement": {
+            "minimum": 1.10,
+            "tier_minimum": 1.50,
+            "description": "RUS minimum DSC and TIER requirements"
+        },
+        "merchant_power": {
+            "minimum": 1.30,
+            "average": 1.50,
+            "description": "Typical DSCR for merchant power projects"
+        },
+        "contracted_renewable": {
+            "minimum": 1.25,
+            "average": 1.35,
+            "description": "Typical DSCR for contracted renewable energy"
+        }
+    },
+    "credit_spread_benchmarks_bps": {
+        "AAA": 50,
+        "AA": 75,
+        "A": 100,
+        "BBB": 150,
+        "BB": 250,
+        "B": 400,
+        "CCC": 700
+    },
+    "entity_risk_adjustments": {
+        "cooperative": 0.85,
+        "municipal_utility": 0.80,
+        "public_utility_district": 0.85,
+        "state_authority": 0.80,
+        "investor_owned_utility": 1.00,
+        "independent_power_producer": 1.15,
+        "private_developer": 1.25,
+        "community_choice_aggregator": 1.10
+    },
+    "offtake_contract_adjustments": {
+        "firm_ppa_ig_offtaker": 0.75,
+        "firm_ppa_sub_ig_offtaker": 0.90,
+        "bundled_ppa": 0.85,
+        "vppa_cfd": 0.95,
+        "merchant": 1.30,
+        "cost_of_service": 0.70,
+        "feed_in_tariff": 0.75
+    }
+}
